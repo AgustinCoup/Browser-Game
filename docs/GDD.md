@@ -28,6 +28,8 @@ Cuatro stats primarios:
 
 Derivados (Vida, Defensa, Evasión, Crítico, Poder de hechizo): fórmulas en `game/formulas.py`. Los valores exactos de Constitución son **[AJUSTABLE]**.
 
+Valores iniciales de un personaje nuevo **[DECIDIDO por ahora, AJUSTABLE — placeholders]**: cada stat base 10 (más los bonos de raza), nivel 1, xp 0, oro 0. Viven en `data/balance.yaml`.
+
 ### 3.2 Razas **[DECIDIDO]**
 | Raza | Rasgos |
 |---|---|
@@ -45,6 +47,8 @@ Derivados (Vida, Defensa, Evasión, Crítico, Poder de hechizo): fórmulas en `g
 
 Bono de clase: **+10% de poder efectivo** en su tipo de misión **[DECIDIDO por ahora, AJUSTABLE]**.
 
+Además, la clase **reduce levemente el desgaste de equipo** en su tipo de misión: **×0.95** **[DECIDIDO por ahora, AJUSTABLE — placeholder]**. Se combina de forma **multiplicativa** con el multiplicador de enfoque (ver 4.2).
+
 ### 3.4 Competencias de equipo **[DECIDIDO por ahora, AJUSTABLE]**
 El equipo tiene peso (ligero, medio, pesado) y las razas y clases otorgan competencia. **Usar equipo sin competencia no está prohibido: el equipo aporta menos bono de lo normal.** **[DECIDIDO]**
 
@@ -52,7 +56,13 @@ Reglas **[DECIDIDO por ahora, AJUSTABLE]**:
 - Sin competencia, el equipo aporta **50% de su bono**.
 - Las competencias de raza y de clase **se suman**: basta con que una de las dos la otorgue.
 
-Pendiente **[DIFERIDO]**: definir qué cuenta como arma y qué como armadura en cada peso al diseñar los datos de ítems.
+Clasificación **[DECIDIDO]**: el **peso** (ligero, medio, pesado) es propio de las **armaduras**; las **armas** se clasifican en **ligeras, a distancia y marciales**.
+
+Supuestos de implementación **[DECIDIDO por ahora, AJUSTABLE]**:
+- Las **razas** otorgan competencia solo de **armadura** (por peso); las **clases** otorgan competencia de **armas** (Guerrero: ligeras, a distancia y marciales; Pícaro: ligeras; Mago: ninguna, usa hechizos). Las clases no otorgan competencia de armadura por ahora.
+- Un usuario tiene **un solo personaje**.
+
+Pendiente **[DIFERIDO]**: qué ítems concretos entran en cada peso de armadura y cada clase de arma, al diseñar los datos de ítems.
 
 ### 3.5 Etiquetas de rol **[DECIDIDO por ahora]**
 Vanguardia, Sigilo, Arcano, Apoyo. Cada clase aporta una; se usan para los incentivos blandos de cooperación (sección 5).
@@ -75,6 +85,8 @@ Todo definido como **datos** (YAML/JSON), no hardcodeado. MVP: 4 razas × 3 clas
 |---|---|---|
 | Enfoque ideal | ×1.20 | ×0.80 |
 | Enfoque no ideal | ×0.90 | ×1.30 |
+
+Los multiplicadores de enfoque, el bono de clase (3.3) y los demás se combinan de forma **multiplicativa** **[DECIDIDO]**. Ejemplo: enfoque ideal + bono de clase = poder ×1.20 × 1.10 = ×1.32; desgaste ×0.80 × 0.95 = ×0.76.
 
 Valores iniciales para calibrar con simulación. Cualquier enfoque es posible: el jugador evalúa costo/beneficio. Fórmula orientativa de resolución: `éxito = poder_efectivo + equipo + tirada(semilla) vs dificultad`.
 

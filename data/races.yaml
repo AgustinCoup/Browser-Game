@@ -1,3 +1,21 @@
+# PLANTILLA para agregar una raza nueva (copiá el bloque, descomentalo y completalo al final del archivo).
+# Todos los campos son obligatorios; el loader (game/loader.py) rechaza lo que falte o sea inválido.
+#
+# - id: gnome                      # minúsculas, sin espacios, único. Se guarda en Character.race (máx. 32 caracteres)
+#   name: Gnomo                    # nombre que ve el jugador
+#   stat_bonuses:                  # bonos fijos; claves válidas: strength, dexterity, wisdom, constitution
+#     wisdom: 1                    # enteros >= 0. Usá {} si no tiene bonos fijos
+#     constitution: 1
+#   choose_bonus:                  # OPCIONAL: bono a elección del jugador (como el Humano). Omitir la clave si no aplica
+#     count: 2                     # a cuántos stats distintos (1 a 4)
+#     amount: 1                    # cuánto suma a cada uno
+#   armor_proficiencies: [light]   # light, medium y/o heavy. [] si ninguna
+#   traits:                        # rasgos; [] si no tiene. Por ahora son descriptivos (sin efecto en fórmulas)
+#     - id: tinkerer
+#       description: Texto del rasgo.
+#
+# IMPORTANTE: el contenido debe ser propio, sin nombres/criaturas/lore protegidos de D&D (GDD 10).
+
 # Razas del MVP (GDD 3.2). Las competencias de raza son de ARMADURA (por peso).
 # [SUPUESTO] pendiente de confirmar: las razas no otorgan competencia de armas.
 - id: human

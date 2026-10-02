@@ -199,3 +199,87 @@ def test_invalid_choose_bonus_raises(data_dir, bad):
 
     with pytest.raises(DataValidationError, match="choose_bonus|count"):
         load_game_data(data_dir)
+
+
+# --- plantillas de misión ---------------------------------------------------
+
+
+def test_loads_quest_templates():
+    quests = load_game_data().quests
+
+    assert set(quests) == {"sewer_smugglers", "forged_seal", "whispering_cellar"}
+    smugglers = quests["sewer_smugglers"]
+    assert smugglers.quest_type == "combat"
+    assert smugglers.tier == 1
+    assert smugglers.rewards.xp == 30
+    assert smugglers.rewards.gold == 20
+    assert smugglers.cities == ("hierrafuerte",)
+
+
+def test_quest_templates_cover_the_three_quest_types():
+    quests = load_game_data().quests
+
+    assert {q.quest_type for q in quests.values()} == {"combat", "infiltration", "mystery"}
+
+
+def test_quest_unknown_type_raises(data_dir):
+    def bad_type(quests):
+        quests[0]["quest_type"] = "cooking"
+
+    edit_yaml(data_dir, "quests.yaml", bad_type)
+
+    with pytest.raises(DataValidationError, match="cooking"):
+        load_game_data(data_dir)
+
+
+@pytest.mark.parametrize("field", ["tier", "duration_minutes", "difficulty", "expires_after_hours"])
+@pytest.mark.parametrize("bad", [0, -1, "x", 1.5])
+def test_quest_positive_int_fields_are_validated(data_dir, field, bad):
+    def set_bad(quests):
+        quests[0][field] = bad
+
+    edit_yaml(data_dir, "quests.yaml", set_bad)
+
+    with pytest.raises(DataValidationError, match=field):
+        load_game_data(data_dir)
+
+
+def test_quest_negative_reward_raises(data_dir):
+    def negative(quests):
+        quests[0]["rewards"]["gold"] = -5
+
+    edit_yaml(data_dir, "quests.yaml", negative)
+
+    with pytest.raises(DataValidationError, match="gold"):
+        load_game_data(data_dir)
+
+
+def test_quest_missing_rewards_raises(data_dir):
+    def drop(quests):
+        del quests[0]["rewards"]
+
+    edit_yaml(data_dir, "quests.yaml", drop)
+
+    with pytest.raises(DataValidationError, match="rewards"):
+        load_game_data(data_dir)
+
+
+@pytest.mark.parametrize("bad", [[], "hierrafuerte", [""], [1]])
+def test_quest_cities_must_be_a_non_empty_list_of_ids(data_dir, bad):
+    def set_bad(quests):
+        quests[0]["cities"] = bad
+
+    edit_yaml(data_dir, "quests.yaml", set_bad)
+
+    with pytest.raises(DataValidationError, match="cities"):
+        load_game_data(data_dir)
+
+
+def test_quest_duplicate_id_raises(data_dir):
+    def duplicate(quests):
+        quests[1]["id"] = quests[0]["id"]
+
+    edit_yaml(data_dir, "quests.yaml", duplicate)
+
+    with pytest.raises(DataValidationError, match="duplicad"):
+        load_game_data(data_dir)

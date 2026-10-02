@@ -1,0 +1,62 @@
+# PLANTILLAS DE MISIÓN (GDD 4.1, 4.2, 4.3). Copiá un bloque y completalo al final del archivo.
+# Todos los campos son obligatorios; el loader (game/loader.py) rechaza lo que falte o sea inválido.
+# Los números son PLACEHOLDERS [AJUSTABLE]: se calibran con simulación en sim/.
+#
+# - id: sewer_smugglers            # minúsculas, sin espacios, único (máx. 64 caracteres)
+#   name: Contrabandistas en las cloacas   # título que ve el jugador en el tablón
+#   quest_type: combat             # combat | infiltration | mystery (lo define el spawn)
+#   tier: 1                        # nivel de la misión (entero >= 1)
+#   duration_minutes: 10           # lo que tarda la expedición (entero >= 1)
+#   difficulty: 40                 # se compara contra poder_efectivo + equipo + tirada (entero >= 1)
+#   rewards:                       # recompensa base; la misión arriesgada suma +50% (GDD 4.3), lo decide el spawn
+#     xp: 30
+#     gold: 20
+#   base_wear: 5                   # desgaste base del equipo, antes de multiplicadores (entero >= 0)
+#   expires_after_hours: 24        # cuánto vive la instancia en el tablón (entero >= 1)
+#   cities: [hierrafuerte]         # ciudades donde puede aparecer (lista de ids, al menos una)
+#   description: Texto corto del tablón.
+#
+# "Arriesgada" NO es un campo: cualquier misión puede serlo (GDD 4.3).
+# IMPORTANTE: contenido propio, sin nombres/criaturas/lore protegidos de D&D (GDD 10).
+
+- id: sewer_smugglers
+  name: Contrabandistas en las cloacas
+  quest_type: combat
+  tier: 1
+  duration_minutes: 10
+  difficulty: 40
+  rewards:
+    xp: 30
+    gold: 20
+  base_wear: 5
+  expires_after_hours: 24
+  cities: [hierrafuerte]
+  description: Una banda usa las cloacas de la fortaleza para mover armas. Limpiala a hierro.
+
+- id: forged_seal
+  name: El sello falsificado
+  quest_type: infiltration
+  tier: 1
+  duration_minutes: 12
+  difficulty: 45
+  rewards:
+    xp: 35
+    gold: 25
+  base_wear: 3
+  expires_after_hours: 24
+  cities: [hierrafuerte]
+  description: Alguien vende órdenes con el sello de la guarnición. Entrá al taller sin ser visto.
+
+- id: whispering_cellar
+  name: La bodega que susurra
+  quest_type: mystery
+  tier: 1
+  duration_minutes: 15
+  difficulty: 50
+  rewards:
+    xp: 40
+    gold: 15
+  base_wear: 2
+  expires_after_hours: 24
+  cities: [hierrafuerte]
+  description: Los soldados oyen voces bajo el cuartel. Descubrí qué las provoca antes de que cunda el pánico.

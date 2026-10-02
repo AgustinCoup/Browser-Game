@@ -1,0 +1,32 @@
+# Números de balance. Todos son [AJUSTABLE] (GDD 3.3, 3.4, 4.2): se calibran con simulación en sim/.
+
+# Tipos de misión y stat que usa el enfoque correspondiente (GDD 4.2).
+quest_types:
+  combat: strength
+  infiltration: dexterity
+  mystery: wisdom
+
+# Multiplicadores según el enfoque elegido (GDD 4.2).
+focus:
+  ideal: # el enfoque coincide con el tipo de misión
+    power: 1.20
+    wear: 0.80
+  non_ideal:
+    power: 0.90
+    wear: 1.30
+
+# Bono de clase cuando la misión es del tipo de la clase (GDD 3.3).
+class_bonus:
+  power: 1.10 # +10% de poder efectivo
+  wear: 0.95 # PLACEHOLDER: la clase reduce levemente el desgaste (no está en el GDD)
+
+# Competencia de equipo (GDD 3.4).
+gear:
+  unproficient_factor: 0.50 # sin competencia el equipo aporta 50% de su bono
+
+# Valores iniciales de un personaje. PLACEHOLDERS: el GDD no los define.
+character_defaults:
+  base_stat: 10
+  level: 1
+  xp: 0
+  gold: 0

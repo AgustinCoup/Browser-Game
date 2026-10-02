@@ -1,0 +1,33 @@
+# Razas del MVP (GDD 3.2). Las competencias de raza son de ARMADURA (por peso).
+# [SUPUESTO] pendiente de confirmar: las razas no otorgan competencia de armas.
+- id: human
+  name: Humano
+  stat_bonuses: {}
+  choose_bonus: # +1 a dos stats a elección; se aplica al crear el personaje
+    count: 2
+    amount: 1
+  armor_proficiencies: [medium]
+  traits: []
+
+- id: dwarf
+  name: Enano
+  stat_bonuses:
+    constitution: 2
+  armor_proficiencies: [heavy]
+  traits: []
+
+- id: elf
+  name: Elfo
+  stat_bonuses:
+    wisdom: 2
+  armor_proficiencies: [light]
+  traits: []
+
+- id: halfling
+  name: Mediano
+  stat_bonuses:
+    dexterity: 2
+  armor_proficiencies: [light]
+  traits:
+    - id: lucky
+      description: Una vez por misión relanza la peor tirada del resultado. (Sin efecto numérico todavía.)

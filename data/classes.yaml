@@ -1,0 +1,31 @@
+# Clases del MVP (GDD 3.3). Armas: light (ligeras), ranged (a distancia), martial (marciales).
+# role_tag: etiqueta de rol (GDD 3.5), usada más adelante por misiones grupales.
+- id: warrior
+  name: Guerrero
+  quest_type_bonus: combat
+  role_tag: vanguard
+  weapon_proficiencies: [light, ranged, martial] # todas las armas desde el inicio
+  armor_proficiencies: [] # [SUPUESTO] el GDD no define armadura por clase
+  traits: []
+
+- id: rogue
+  name: Pícaro
+  quest_type_bonus: infiltration
+  role_tag: stealth
+  weapon_proficiencies: [light]
+  armor_proficiencies: []
+  traits:
+    - id: efficient_infiltration_consumables
+      description: Consumibles de infiltración más eficientes. (Sin efecto numérico todavía.)
+
+- id: mage
+  name: Mago
+  quest_type_bonus: mystery
+  role_tag: arcane
+  weapon_proficiencies: [] # combate sin armas, usando hechizos
+  armor_proficiencies: []
+  traits:
+    - id: spell_combat
+      description: Combate sin armas usando hechizos.
+    - id: magic_item_bonus
+      description: Bono a los efectos de los objetos mágicos. (Sin efecto numérico todavía.)

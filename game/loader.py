@@ -83,10 +83,32 @@ class Balance:
 
 
 @dataclass(frozen=True)
+class Rewards:
+    xp: int
+    gold: int
+
+
+@dataclass(frozen=True)
+class QuestTemplate:
+    id: str
+    name: str
+    quest_type: str
+    tier: int
+    duration_minutes: int
+    difficulty: int
+    rewards: Rewards
+    base_wear: int
+    expires_after_hours: int
+    cities: tuple[str, ...]
+    description: str
+
+
+@dataclass(frozen=True)
 class GameData:
     balance: Balance
     races: Mapping[str, Race]
     classes: Mapping[str, CharacterClass]
+    quests: Mapping[str, QuestTemplate]
 
 
 # --- helpers de validación -------------------------------------------------
@@ -224,6 +246,36 @@ def _parse_class(raw: Any, quest_types: tuple[str, ...]) -> CharacterClass:
     )
 
 
+def _parse_cities(raw: Any, where: str) -> tuple[str, ...]:
+    cities = _require(raw, "cities", where)
+    if not isinstance(cities, list) or not cities:
+        raise DataValidationError(f"{where}: 'cities' debe ser una lista no vacía de ids")
+    if not all(isinstance(c, str) and c for c in cities):
+        raise DataValidationError(f"{where}: 'cities' debe contener solo textos no vacíos")
+    return tuple(cities)
+
+
+def _parse_quest(raw: Any, quest_types: tuple[str, ...]) -> QuestTemplate:
+    where = f"quests.yaml[{raw.get('id', '?') if isinstance(raw, dict) else '?'}]"
+    rewards = _require(raw, "rewards", where)
+    return QuestTemplate(
+        id=_str(raw, "id", where),
+        name=_str(raw, "name", where),
+        quest_type=_choice(_require(raw, "quest_type", where), quest_types, where),
+        tier=_int(raw, "tier", where, 1),
+        duration_minutes=_int(raw, "duration_minutes", where, 1),
+        difficulty=_int(raw, "difficulty", where, 1),
+        rewards=Rewards(
+            xp=_int(rewards, "xp", f"{where}.rewards"),
+            gold=_int(rewards, "gold", f"{where}.rewards"),
+        ),
+        base_wear=_int(raw, "base_wear", where),
+        expires_after_hours=_int(raw, "expires_after_hours", where, 1),
+        cities=_parse_cities(raw, where),
+        description=_str(raw, "description", where),
+    )
+
+
 def _parse_focus(raw: Any, key: str) -> FocusModifier:
     where = f"balance.yaml focus.{key}"
     section = _require(raw, key, where)
@@ -274,14 +326,16 @@ def _parse_balance(raw: Any) -> Balance:
 
 
 def load_game_data(data_dir: Path | str = DEFAULT_DATA_DIR) -> GameData:
-    """Lee data/balance.yaml, races.yaml y classes.yaml y devuelve datos validados e inmutables."""
+    """Lee los YAML de data/ y devuelve datos validados e inmutables."""
     data_dir = Path(data_dir)
     balance = _parse_balance(_read_yaml(data_dir / "balance.yaml"))
     quest_types = tuple(balance.stat_for_quest_type)
     races = [_parse_race(r) for r in _entries(data_dir / "races.yaml")]
     classes = [_parse_class(c, quest_types) for c in _entries(data_dir / "classes.yaml")]
+    quests = [_parse_quest(q, quest_types) for q in _entries(data_dir / "quests.yaml")]
     return GameData(
         balance=balance,
         races=_index_by_id(races, "races.yaml"),
         classes=_index_by_id(classes, "classes.yaml"),
+        quests=_index_by_id(quests, "quests.yaml"),
     )

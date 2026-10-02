@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class QuestsConfig(AppConfig):
-    name = 'apps.quests'
+    name = "apps.quests"

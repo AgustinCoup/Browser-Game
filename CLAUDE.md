@@ -12,7 +12,7 @@ Juego web de rol por misiones asincrónicas (estilo Gladiatus, fantasía propia 
 - **Razas MVP:** humano, enano, elfo, mediano. **Clases MVP:** guerrero, pícaro, mago.
 
 ## Stack
-- Python 3.12+, **Django**, PostgreSQL
+- Python 3.12+, **Django**, MySQL 8 (InnoDB, utf8mb4); tests con SQLite
 - Frontend: templates de Django + **HTMX** (+ Alpine.js si hace falta). Sin SPA.
 - Tareas en segundo plano: Celery + Redis (o alternativa simple a decidir)
 - Tests: pytest + pytest-django. Lint/format: Ruff. pre-commit.
@@ -58,10 +58,19 @@ docs/GDD.md
 
 ## Comandos
 ```
-# completar al crear el proyecto
-pytest                  # tests
-ruff check . && ruff format .
+# Setup (una vez)
+python -m venv .venv && .venv/Scripts/activate      # Windows; en Linux/Mac: source .venv/bin/activate
+pip install -r requirements/dev.txt
+cp .env.example .env                                 # completar SECRET_KEY y DATABASE_URL
+pre-commit install
+
+pytest                                               # tests (SQLite en memoria, no requiere MySQL)
+ruff check . && ruff format .                        # lint + formato
+python manage.py check                               # chequeo de configuración
+python manage.py makemigrations --check --dry-run    # verifica que no falten migraciones
+python manage.py migrate                             # aplica migraciones (requiere MySQL según .env)
 python manage.py runserver
+docker compose up --build                            # app + MySQL con Docker Compose
 ```
 
 ## Cómo trabajar conmigo

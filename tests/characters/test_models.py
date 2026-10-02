@@ -61,3 +61,8 @@ def test_str_is_readable(user):
     character = Character(user=user, race="elf", char_class="mage")
 
     assert str(character) == "aldric (elf mage, nivel 1)"
+
+
+def test_database_rejects_level_zero_even_without_validation(user):
+    with pytest.raises(IntegrityError):
+        Character.objects.create(user=user, race="elf", char_class="mage", level=0)

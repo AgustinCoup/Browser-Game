@@ -51,10 +51,15 @@ class Character(models.Model):
     level = models.PositiveSmallIntegerField(
         default=default_level, validators=[MinValueValidator(1)]
     )
-    xp = models.PositiveIntegerField(default=default_xp)
-    gold = models.PositiveIntegerField(default=default_gold)
+    xp = models.PositiveBigIntegerField(default=default_xp)
+    gold = models.PositiveBigIntegerField(default=default_gold)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(level__gte=1), name="character_level_gte_1"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.user.get_username()} ({self.race} {self.char_class}, nivel {self.level})"

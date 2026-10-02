@@ -3,8 +3,9 @@
 import os
 
 # Debe fijarse antes de importar base (que lee SECRET_KEY y DATABASE_URL).
-os.environ.setdefault("SECRET_KEY", "test-only-not-a-secret")
-os.environ.setdefault("DATABASE_URL", "sqlite://:memory:")
+# Se fuerzan (no setdefault) para que un DATABASE_URL real del entorno nunca afecte a los tests.
+os.environ["SECRET_KEY"] = "test-only-not-a-secret"
+os.environ["DATABASE_URL"] = "sqlite://:memory:"
 
 from .base import *  # noqa: E402, F403
 

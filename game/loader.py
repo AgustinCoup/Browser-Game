@@ -3,6 +3,7 @@
 El resultado es inmutable: dataclasses congeladas, tuplas y mapeos de solo lectura.
 """
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -122,8 +123,13 @@ def _int(obj: Any, key: str, where: str, minimum: int = 0) -> int:
 
 def _positive_float(obj: Any, key: str, where: str) -> float:
     value = _require(obj, key, where)
-    if isinstance(value, bool) or not isinstance(value, int | float) or value <= 0:
-        raise DataValidationError(f"{where}: '{key}' debe ser un número > 0")
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int | float)
+        or not math.isfinite(value)
+        or value <= 0
+    ):
+        raise DataValidationError(f"{where}: '{key}' debe ser un número finito > 0")
     return float(value)
 
 
@@ -181,18 +187,25 @@ def _parse_stat_bonuses(raw: Any, where: str) -> Mapping[str, int]:
     return MappingProxyType(bonuses)
 
 
+def _parse_choose_bonus(choose: dict | None, where: str) -> ChooseBonus | None:
+    if choose is None:
+        return None
+    count = _int(choose, "count", where, 1)
+    if count > len(STATS):
+        raise DataValidationError(f"{where}: 'choose_bonus.count' no puede superar {len(STATS)}")
+    return ChooseBonus(count, _int(choose, "amount", where, 1))
+
+
 def _parse_race(raw: Any) -> Race:
     where = f"races.yaml[{raw.get('id', '?') if isinstance(raw, dict) else '?'}]"
     choose = raw.get("choose_bonus")
+    if "choose_bonus" in raw and not isinstance(choose, dict):
+        raise DataValidationError(f"{where}: 'choose_bonus' debe ser un mapa con count y amount")
     return Race(
         id=_str(raw, "id", where),
         name=_str(raw, "name", where),
         stat_bonuses=_parse_stat_bonuses(_require(raw, "stat_bonuses", where), where),
-        choose_bonus=(
-            ChooseBonus(_int(choose, "count", where, 1), _int(choose, "amount", where, 1))
-            if choose
-            else None
-        ),
+        choose_bonus=_parse_choose_bonus(choose, where),
         armor_proficiencies=_choice_list(raw, "armor_proficiencies", ARMOR_WEIGHTS, where),
         traits=_traits(raw, where),
     )
@@ -234,13 +247,23 @@ def _parse_balance(raw: Any) -> Balance:
     gear = _require(raw, "gear", "balance.yaml")
     defaults = _require(raw, "character_defaults", "balance.yaml")
     where = "balance.yaml character_defaults"
+    ideal = _parse_focus(focus, "ideal")
+    non_ideal = _parse_focus(focus, "non_ideal")
+    unproficient = _positive_float(gear, "unproficient_factor", "balance.yaml gear")
+    if ideal.power < non_ideal.power or ideal.wear > non_ideal.wear:
+        raise DataValidationError(
+            "balance.yaml focus: el enfoque ideal debe dar más poder y menos desgaste "
+            "que el no ideal"
+        )
+    if unproficient > 1:
+        raise DataValidationError("balance.yaml gear: 'unproficient_factor' debe ser <= 1")
     return Balance(
         stat_for_quest_type=_parse_quest_types(raw),
-        focus_ideal=_parse_focus(focus, "ideal"),
-        focus_non_ideal=_parse_focus(focus, "non_ideal"),
+        focus_ideal=ideal,
+        focus_non_ideal=non_ideal,
         class_power_multiplier=_positive_float(class_bonus, "power", "balance.yaml class_bonus"),
         class_wear_multiplier=_positive_float(class_bonus, "wear", "balance.yaml class_bonus"),
-        unproficient_gear_factor=_positive_float(gear, "unproficient_factor", "balance.yaml gear"),
+        unproficient_gear_factor=unproficient,
         character_defaults=CharacterDefaults(
             base_stat=_int(defaults, "base_stat", where),
             level=_int(defaults, "level", where, 1),

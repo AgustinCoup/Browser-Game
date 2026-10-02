@@ -158,3 +158,44 @@ def test_non_positive_multiplier_raises(data_dir):
 
     with pytest.raises(DataValidationError, match="power"):
         load_game_data(data_dir)
+
+
+@pytest.mark.parametrize("bad", [".nan", ".inf"])
+def test_nan_and_inf_balance_values_raise(data_dir, bad):
+    path = data_dir / "balance.yaml"
+    text = path.read_text(encoding="utf-8").replace("power: 1.20", f"power: {bad}")
+    path.write_text(text, encoding="utf-8")
+
+    with pytest.raises(DataValidationError, match="power"):
+        load_game_data(data_dir)
+
+
+def test_unproficient_factor_above_one_raises(data_dir):
+    def too_big(balance):
+        balance["gear"]["unproficient_factor"] = 1.5
+
+    edit_yaml(data_dir, "balance.yaml", too_big)
+
+    with pytest.raises(DataValidationError, match="unproficient_factor"):
+        load_game_data(data_dir)
+
+
+def test_ideal_focus_worse_than_non_ideal_raises(data_dir):
+    def inverted(balance):
+        balance["focus"]["ideal"]["power"] = 0.5
+
+    edit_yaml(data_dir, "balance.yaml", inverted)
+
+    with pytest.raises(DataValidationError, match="ideal"):
+        load_game_data(data_dir)
+
+
+@pytest.mark.parametrize("bad", [0, "dos", {}, {"count": 9, "amount": 1}])
+def test_invalid_choose_bonus_raises(data_dir, bad):
+    def set_bad(races):
+        races[0]["choose_bonus"] = bad
+
+    edit_yaml(data_dir, "races.yaml", set_bad)
+
+    with pytest.raises(DataValidationError, match="choose_bonus|count"):
+        load_game_data(data_dir)

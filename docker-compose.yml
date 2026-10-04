@@ -7,11 +7,14 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD} # lo lee mysqladmin: evita la clave en la línea de comandos
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      # MYSQL_PWD solo para este comando: si estuviera en el entorno del contenedor,
+      # rompería el entrypoint (que inicializa root sin clave y luego la cambia).
+      # Ping por TCP (127.0.0.1): el servidor temporal del init solo escucha por socket,
+      # y con -h localhost daría "healthy" antes de que la DB esté realmente lista.
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysqladmin ping -h 127.0.0.1 --protocol=tcp"]
       interval: 5s
       timeout: 5s
       retries: 20

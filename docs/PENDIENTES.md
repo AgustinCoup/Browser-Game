@@ -5,7 +5,7 @@ Estado revisado el 2026-10-02.
 
 ## A. Cosas que faltan instalar o configurar
 
-### [ ] A1. Archivo `.env` (lo más urgente, sin esto Django no arranca)
+### [x] A1. Archivo `.env` (lo más urgente, sin esto Django no arranca)
 Hoy **no existe** `.env`. Django exige `SECRET_KEY` y `DATABASE_URL` y falla si faltan.
 1. Copiá `.env.example` a `.env` (en PowerShell: `Copy-Item .env.example .env`).
 2. Cambiá `SECRET_KEY=cambiame` por una clave larga y al azar. Para generarla:
@@ -14,7 +14,7 @@ Hoy **no existe** `.env`. Django exige `SECRET_KEY` y `DATABASE_URL` y falla si 
 
 > Los **tests** (`pytest`) NO necesitan `.env` ni MySQL: `config/settings/test.py` pone sus propios valores y usa SQLite en memoria.
 
-### [ ] A2. Una base de datos MySQL para correr el juego "de verdad"
+### [x] A2. Una base de datos MySQL para correr el juego "de verdad"
 Hoy **no hay MySQL instalado**. Para `runserver` y `migrate` necesitás uno. Dos caminos:
 
 | Camino | Qué es | Cuándo conviene |
@@ -22,7 +22,7 @@ Hoy **no hay MySQL instalado**. Para `runserver` y `migrate` necesitás uno. Dos
 | **Docker Compose** (recomendado por el proyecto) | Docker levanta MySQL y la app en contenedores con un solo comando | Es lo que define `docker-compose.yml`. Evita instalar MySQL a mano y deja el entorno igual al de producción |
 | MySQL instalado directo en Windows | Instalador de MySQL Community Server | Si Docker te da problemas. Después ajustás `DATABASE_URL` en `.env` |
 
-### [ ] A3. Docker Desktop (¿hace falta? Sí si elegís el camino recomendado)
+### [x] A3. Docker Desktop (¿hace falta? Sí si elegís el camino recomendado)
 Hoy **no está instalado**. Pasos en Windows 10:
 1. Bajá **Docker Desktop for Windows** desde docker.com.
 2. Necesita **WSL 2** (Windows Subsystem for Linux). El instalador lo ofrece activar. Puede pedir reiniciar la PC.
@@ -35,14 +35,14 @@ Cuando llegues a este punto, avisame y lo hacemos juntos paso a paso.
 
 > Docker **no es obligatorio para empezar a desarrollar las reglas**: `game/`, `data/` y los tests corren solos con Python. Lo necesitás recién cuando quieras ver el juego en el navegador.
 
-### [ ] A4. Pasos de setup que ya están documentados en `CLAUDE.md` (sección Comandos)
+### [x] A4. Pasos de setup que ya están documentados en `CLAUDE.md` (sección Comandos)
 - Crear el entorno virtual: `.venv` ya existe en tu carpeta.
 - `pip install -r requirements/dev.txt`
 - `pre-commit install`
 
 Nota: `mysqlclient` se compila al instalar y en Windows suele dar error si no hay herramientas de compilación. Si `pip install` falla en ese paquete, decímelo y lo resolvemos (es otro motivo para usar Docker, donde ya está resuelto en el `Dockerfile`).
 
-### [ ] A5. Versión de Python
+### [x] A5. Versión de Python
 Tenés Python 3.14.5; el proyecto pide 3.12+ y el Dockerfile usa 3.12. Debería andar, pero si algo raro falla al instalar paquetes, esa diferencia es la primera sospecha.
 
 ## B. Cosas que faltan construir (del lado del código)

@@ -58,7 +58,7 @@ Tenés Python 3.14.5; el proyecto pide 3.12+ y el Dockerfile usa 3.12. Debería 
 
 ## C. Conceptos para entender (marcá a medida que los entiendas)
 
-- [ ] **YAML**: formato de texto para datos, como JSON pero legible y con comentarios.
+- [x] **YAML**: formato de texto para datos, como JSON pero legible y con comentarios.
 - [ ] **Django**: framework web de Python. Ver explicación en la conversación; resumen en `GUIA_DESARROLLO.md`.
 - [ ] **Modelo / migración**: clase Python que representa una tabla / archivo que cambia la tabla.
 - [ ] **Vista / URL / template**: cómo una dirección del navegador termina en una página.

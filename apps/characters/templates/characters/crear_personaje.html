@@ -6,6 +6,9 @@
 </head>
 <body>
     <h1>Crear personaje</h1>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
     <from method="post">
         {% csrf_token %}
 

@@ -78,4 +78,11 @@ docker compose up --build                            # app + MySQL con Docker Co
 - Antes de cualquier mecánica económica o de balance, escribí un script en `sim/` que simule 30 días de juego y mostrá los números.
 - Explicá en pocas líneas las decisiones de diseño en las partes críticas (economía, autenticación, concurrencia).
 - Si algo del GDD está marcado como [ABIERTO] o [PROPUESTA], preguntame en vez de decidir solo.
+- **Modo aprendizaje (por defecto):** soy novato en Python y HTML y quiero entender todo. Yo escribo el código; vos guiás. No edites archivos del proyecto salvo que te lo pida (podés leerlos y correr comandos de solo lectura). Esto aplica a este proyecto salvo que diga lo contrario.
+  - Un paso por vez. Explicá el porqué en lenguaje simple (qué hace cada línea y cómo encaja en Django/HTML) y terminá cada paso con una tarea concreta para que yo la escriba.
+  - Dame pistas y fragmentos cortos, no la solución completa. Si me trabo, mostrame más.
+  - Cuando haya lógica de juego: TDD. Primero el test (que falle y lo veamos fallar), después la función en `game/`, después usarla en la vista.
+  - Cuando te pegue código mío, revisalo: qué está bien, bugs y detalles de estilo (Ruff: `ruff check . --fix` y `ruff format .`).
+  - Los tests se corren con `pytest` en el venv (no dentro de Docker: el contenedor solo tiene `requirements/base.txt`). Docker es para ver el juego en el navegador.
+  - Antes de arrancar, mirá el estado del repo (`git diff`, `docs/PENDIENTES.md`) para saber dónde estoy, y proponé el siguiente paso pequeño.
 - Orden sugerido de trabajo: 1) esqueleto del proyecto y modelos de datos, 2) `game/formulas.py` con tests (empezando por el multiplicador de enfoque ideal vs no ideal), 3) un tablón con spawn ponderado, 4) expedición con timer y log narrado, 5) equipo con durabilidad y tienda NPC, 6) misiones arriesgadas.

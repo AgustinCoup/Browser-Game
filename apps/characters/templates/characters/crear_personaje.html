@@ -9,13 +9,17 @@
     {% if error %}
         <p>{{ error }}</p>
     {% endif %}
-    <from method="post">
+    <form method="post">
         {% csrf_token %}
 
         <label for="raza">Raza</label>
         <select name="raza" id="raza">
             {% for raza in razas %}
-                <option value="{{ raza.id }}">{{raza.name}}</option>
+                <option value="{{ raza.id }}">{{raza.name}}
+                    {% for stat, valor in raza.stat_bonuses.items %}
+                        +{{valor}} {{ stat }}
+                    {% endfor %}
+                </option>
             {% endfor %}
         </select>
 
@@ -27,6 +31,6 @@
         </select>
 
         <button type="submit">Crear personaje</button>
-    </from>
+    </form>
 </body>
 </html>

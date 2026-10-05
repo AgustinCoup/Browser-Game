@@ -186,3 +186,14 @@ def test_invalid_gear_kind_or_weight_raises():
         formulas.is_proficient("armor", "ranged", elf, mage)
     with pytest.raises(ValueError, match="martial"):
         formulas.is_proficient("armor", "martial", elf, mage)
+
+
+## --- bono de raza ----------------------------------------------------
+
+
+def test_race_stat_bonus_applies_to_a_dwarf():
+    dwarf = DATA.races["dwarf"]
+    stats = formulas.starting_stats(dwarf, BALANCE)
+
+    assert stats["constitution"] == 12
+    assert stats["strength"] == 10

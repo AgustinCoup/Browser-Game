@@ -6,6 +6,7 @@ Los multiplicadores se combinan de forma multiplicativa.
 
 from game.loader import (
     ARMOR_WEIGHTS,
+    STATS,
     WEAPON_CLASSES,
     Balance,
     CharacterClass,
@@ -16,6 +17,14 @@ from game.loader import (
 ARMOR = "armor"
 WEAPON = "weapon"
 _GEAR_SUBTYPES = {ARMOR: ARMOR_WEIGHTS, WEAPON: WEAPON_CLASSES}
+
+
+def starting_stats(race: Race, balance: Balance) -> dict[str, int]:
+    """Estadísticas iniciales de un personaje según su raza (GDD 3.1)."""
+    stats = {stat: balance.character_defaults.base_stat for stat in STATS}
+    for stat, bonus in race.stat_bonuses.items():
+        stats[stat] += bonus
+    return stats
 
 
 def _check_quest_type(name: str, balance: Balance) -> None:

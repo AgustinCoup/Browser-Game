@@ -4,6 +4,8 @@ from django.shortcuts import render
 
 from .gamedata import get_game_data
 from .models import Character
+from game.formulas import starting_stats
+
 
 @login_required
 def crear_personaje(request):
@@ -19,11 +21,8 @@ def crear_personaje(request):
         elif Character.objects.filter(user=request.user).exists():
             error = "Ya tienes un personaje creado."
         else:
-            Character.objects.create(
-                user=request.user,
-                race=raza,
-                char_class=clase
-            )
+            stats = starting_stats(data.races[raza], data.balance)
+            Character.objects.create(user=request.user, race=raza, char_class=clase, **stats)
             return HttpResponse("Personaje creado exitosamente.")
 
     contexto = {
